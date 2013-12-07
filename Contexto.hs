@@ -4,8 +4,8 @@ type Evento = (Int, Int)
 type Frec = Int --Frecuencia
 type Contexto = (Frec, [(Evento, Frec)], [((Evento, Evento), Frec)])
 
-
-type ListaProb = [(Float, Float)]
+type Prob = (Float, Float)
+type ListaProb = [Prob]
 
 
 obtFrecVacia :: Contexto -> Frec
@@ -48,5 +48,8 @@ obtIndice x y = obtIndice' x y 0
 		| null y = -1
 		| x == head y = acc
 		| otherwise = obtIndice' x (tail y) (acc +1)
-		
+
+calculaProbs :: Evento -> Contexto -> ListaProb --El evento vacio se considerara (-1,-1)
+obtProb :: Evento -> Evento -> Prob  --El primer evento vendria siendo el contexto (evento anterior)
+
 
