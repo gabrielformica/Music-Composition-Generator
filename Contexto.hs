@@ -1,14 +1,18 @@
+import Data.List (elemIndex)
+
 type Evento = (Int, Int)
 type Frec = Int --Frecuencia
 type Contexto = (Frec, [(Evento, Frec)], [((Evento, Evento), Frec)])
 
-a = [(60,1),(60,3),(50,2),(30,1),(65,3),(56,4),(67,1),(61,3),(55,4)]
 
-
+type ListaProb = [(Float, Float)]
 
 
 obtFrecVacia :: Contexto -> Frec
 obtFrecVacia (p, _, _) = p
+
+obtFrec :: Evento -> Contexto -> Frec
+obtFrec e (_, q, _) = (map snd q) !! (obtIndice e (map fst q))
 
 procSecuencia :: [Evento] -> Contexto -> Contexto
 procSecuencia [] c = c
@@ -19,9 +23,8 @@ creaPares [] = []
 creaPares (x:[]) = []
 creaPares (x:y:zs) = (x,y): creaPares (y:zs)
 
-
 existeEven :: Evento -> Contexto -> Bool
-existeEven even (_, p, _) = even `elem` map fst p
+existeEven e (_, p, _) = e `elem` map fst p
 
 agregarOrden0 :: Contexto -> Evento -> Contexto
 agregarOrden0 (0, [], []) a = (1, [(a, 1)], [])
@@ -37,3 +40,13 @@ agregar x ((b, c):ys) =
 					(b, c+1):ys
 				else
 					(b,c): agregar x ys
+
+obtIndice :: (Eq a) => a -> [a] -> Int
+obtIndice _ [] = -1
+obtIndice x y = obtIndice' x y 0
+	where obtIndice' x y acc 
+		| null y = -1
+		| x == head y = acc
+		| otherwise = obtIndice' x (tail y) (acc +1)
+		
+
