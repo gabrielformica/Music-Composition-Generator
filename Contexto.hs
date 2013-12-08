@@ -1,14 +1,21 @@
-type Evento = (Int, Int)
+import System.Random
+
+
+type Evento = (Int, Int)  --Evento vacio (-1,-1)
 type Frec = Int --Frecuencia
 type Contexto = (Frec, [(Evento, Frec)], [((Evento, Evento), Frec)])
 
-a = [(60,1),(60,3),(50,2),(30,1),(65,3),(56,4),(67,1),(61,3),(55,4)]
-
-
-
+type ProbsAcumulada = [Float]
 
 obtFrecVacia :: Contexto -> Frec
 obtFrecVacia (p, _, _) = p
+
+obtFrecPar :: (Evento, Evento) -> Contexto -> Frec
+obtFrecPar ((-1,-1), e) c = obtFrec e c
+obtFrecPar e (_, _, r) =  (map snd r) !! (obtIndice e (map fst r))
+
+obtFrec :: Evento -> Contexto -> Frec
+obtFrec e (_, q, _) = (map snd q) !! (obtIndice e (map fst q))
 
 procSecuencia :: [Evento] -> Contexto -> Contexto
 procSecuencia [] c = c
@@ -19,9 +26,11 @@ creaPares [] = []
 creaPares (x:[]) = []
 creaPares (x:y:zs) = (x,y): creaPares (y:zs)
 
-
 existeEven :: Evento -> Contexto -> Bool
-existeEven even (_, p, _) = even `elem` map fst p
+existeEven e (_, p, _) = e `elem` map fst p
+
+creaOrden1 :: Evento -> Evento -> (Evento, Evento)
+creaOrden1 a e = (a, e)
 
 agregarOrden0 :: Contexto -> Evento -> Contexto
 agregarOrden0 (0, [], []) a = (1, [(a, 1)], [])
@@ -52,11 +61,12 @@ sumParFrec [] = 0
 sumParFrec x = foldl (\a (b,c) -> a + (c - b)^2) 0 x
 
 elimDups :: (Eq a) => [a] -> [a]
+elimDups [] = []
 elimDups (x:xs) = if notElem x xs then
                       x:elimDups xs
                   else 
                       elimDups xs
-elimDups [] = []
+
 
 union :: (Eq a) => [a] -> [a] -> [a]
 union xs ys = elimDups [x | x <- xs ]++[y | y <- ys, notElem y xs]
@@ -76,3 +86,36 @@ sumCuadrados a b = sumParFrec (constParFrec (union (map fst a) (map fst b))  a b
 
 calcDistancia :: Contexto -> Contexto -> Float
 calcDistancia a b = sqrt  (fromIntegral ((obtprim a - obtprim b)^2 + sumCuadrados (obtseg a) (obtseg b) + sumCuadrados (obtter a) (obtter b)))
+
+
+obtIndice :: (Eq a) => a -> [a] -> Int
+obtIndice _ [] = -1
+obtIndice x y = obtIndice' x y 0
+	where obtIndice' x y acc 
+		| null y = -1
+		| x == head y = acc
+		| otherwise = obtIndice' x (tail y) (acc +1)
+
+obtProb :: Contexto -> (Evento, Evento) -> Float
+obtProb c ((-1,-1), e)  = (obtFrec e c)  `divInt`  (obtFrecVacia c)
+obtProb c@(p, q, r) (a, e) =
+			 if (a, e) `elem` map fst r then
+				 0.3*((obtFrec e c) `divInt` obtFrecVacia c) + 0.7*((obtFrecPar (a, e) c) `divInt` obtFrec a c)
+			 else
+				0.0
+
+divInt ::  Int -> Int -> Float
+a `divInt` b = fromIntegral (a) / fromIntegral (b)
+
+
+obtListaProb :: Evento -> Contexto -> [Float]
+obtListaProb (-1, -1) (p, q, r) =  acumular $ (0.0:) $ map (`divInt` p) $ map snd q
+obtListaProb e c@(p, q, r) = acumular $ (0.0:) $  map (obtProb c) $ map (creaOrden1 e) (map fst q)
+
+acumular :: [Float] -> [Float]
+acumular [] = []
+acumular (x:[]) = []
+acumular (x:y:zs) = (x+y): acumular ((x+y):zs)
+
+
+
