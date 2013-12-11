@@ -1,8 +1,10 @@
+module Contexto where
+
 import Data.List (sort)
 import System.Random
+import Input
 
-
-type Evento = (Int, Int)  --Evento vacio (-1,-1)
+-- type Evento = (Int, Int)  --Evento vacio (-1,-1)
 type Frec = Int --Frecuencia
 type Contexto = (Frec, [(Evento, Frec)], [((Evento, Evento), Frec)])
 
@@ -54,6 +56,15 @@ agregar x ((b, c):ys) =
 obtprim :: Contexto -> Frec
 obtprim (a,_,_) = a
 
+obtprim2 :: (a,b,c) -> a
+obtprim2 (a,_,_) = a
+
+obtseg2 :: (a,b,c) -> b
+obtseg2 (_,b,_) = b                   
+
+obtter2 :: (a,b,c) -> c
+obtter2 (_,_,c) = c
+                  
 obtseg :: Contexto -> [(Evento, Frec)]
 obtseg (_,a,_) = a
 
@@ -126,3 +137,11 @@ obtEvenSig (p, q, r) a b = map fst q !! (obtIndice (head $ filter (a<=) b) b)
 obtRandom :: IO Int
 obtRandom =  getStdRandom (randomR (1, 100))
 
+listify :: ([a], [b], [c]) -> [(a,b,c)]
+listify ((x:xs),(y:ys),(z:zs)) = (x,y,z):listify (xs, ys, zs)
+listify ([],_,_) = []
+
+
+calcDistList :: [(Int, [Evento], String)] -> [Evento] -> [(Int, String, Float)]
+calcDistList (x:xs) y = ((obtprim2 x),(obtter2 x) ,(calcDistancia (procSecuencia (0,[],[]) y) (procSecuencia (0,[],[]) (obtseg2 x)))):calcDistList xs y
+calcDistList [] _ = [] 

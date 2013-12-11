@@ -6,3 +6,4 @@ test.hs
 !.gitignore
 
 *.hi
+Main

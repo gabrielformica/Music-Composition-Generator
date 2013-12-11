@@ -7,6 +7,9 @@ import Data.List
 import Data.Function
 import Contexto
 
+main :: IO ()
+main = componer
+
 -- Directorio predeterminado
 directorio :: String
 directorio = "./xml/"
@@ -27,9 +30,10 @@ componer' :: String -> IO ()
 componer' dir = do
   (seqs, filenames) <- loadMusicXmls dir
   let modelo = foldl procSecuencia (0,[],[]) seqs 
-  -- let composicion = 
-  putStrLn $ show composicion
-  play $ sequenceToMusic composicion
+  -- -- let composicion = 
+  -- putStrLn $ show composicion
+  -- play $ sequenceToMusic composicion
+  putStrLn $ show modelo
 
 {- Recupera las diez secuencias más similares a la k-ésima secuencia 
    de la colección musical en el directorio por defecto, donde la 
@@ -46,8 +50,9 @@ buscar' :: String -> Int -> IO ()
 buscar' dir n = do
   seqfns <- loadMusicXmls dir
   let (seqs, filenames) = unzip $ sortBy (compare `on` snd) $ (uncurry zip) seqfns
+  let lista = listify ([1..(length seqs)],seqs,filenames)
   if (n > 0) && (n <= length seqs) then
-      putStrLn n
+      mapM_ (\(a,b,c) -> putStrLn (show a ++ " " ++ b ++ " " ++ show c)) $ tail $ take 10 $ sortBy (compare `on` obtter2) (calcDistList lista (seqs !! (n-1)))
     else
       putStrLn "Indice fuera de rango"
 
