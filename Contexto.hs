@@ -134,8 +134,8 @@ acumular (x:y:zs) = (x+y): acumular ((x+y):zs)
 obtEvenSig :: Contexto -> Float -> [Float] -> Evento
 obtEvenSig (p, q, r) a b = map fst q !! (obtIndice (head $ filter (a<=) b) b)
 
-obtRandom :: IO Int
-obtRandom =  getStdRandom (randomR (1, 100))
+obtRandom :: IO Float
+obtRandom =  getStdRandom (randomR (0.0::Float, 1.0::Float))
 
 listify :: ([a], [b], [c]) -> [(a,b,c)]
 listify ((x:xs),(y:ys),(z:zs)) = (x,y,z):listify (xs, ys, zs)
@@ -145,3 +145,7 @@ listify ([],_,_) = []
 calcDistList :: [(Int, [Evento], String)] -> [Evento] -> [(Int, String, Float)]
 calcDistList (x:xs) y = ((obtprim2 x),(obtter2 x) ,(calcDistancia (procSecuencia (0,[],[]) y) (procSecuencia (0,[],[]) (obtseg2 x)))):calcDistList xs y
 calcDistList [] _ = [] 
+
+
+f1 :: IO Float -> String
+f1 a = "Hola"
