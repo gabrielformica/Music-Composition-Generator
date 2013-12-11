@@ -1,3 +1,4 @@
+import Data.List (sort)
 import System.Random
 
 
@@ -20,6 +21,9 @@ obtFrec e (_, q, _) = (map snd q) !! (obtIndice e (map fst q))
 procSecuencia :: [Evento] -> Contexto -> Contexto
 procSecuencia [] c = c
 procSecuencia l c = foldl agregarOrden1 (foldl agregarOrden0 c l) (creaPares l)
+
+ordenar :: Contexto -> Contexto
+ordenar (p, q, r) = (p, sort q, sort r)
 
 creaPares :: [a] -> [(a,a)]
 creaPares [] = []
@@ -107,15 +111,17 @@ obtProb c@(p, q, r) (a, e) =
 divInt ::  Int -> Int -> Float
 a `divInt` b = fromIntegral (a) / fromIntegral (b)
 
-
 obtListaProb :: Evento -> Contexto -> [Float]
 obtListaProb (-1, -1) (p, q, r) =  acumular $ (0.0:) $ map (`divInt` p) $ map snd q
-obtListaProb e c@(p, q, r) = acumular $ (0.0:) $  map (obtProb c) $ map (creaOrden1 e) (map fst q)
+obtListaProb e c@(p, q, r) = acumular $ (0.0:) $ map (obtProb c) $ map (creaOrden1 e) (map fst q)
 
 acumular :: [Float] -> [Float]
 acumular [] = []
 acumular (x:[]) = []
 acumular (x:y:zs) = (x+y): acumular ((x+y):zs)
 
+obtEvenSig :: Contexto -> Float -> [Float] -> Evento
+obtEvenSig (p, q, r) a b = map fst q !! (obtIndice (head $ filter (a<=) b) b)
 
-
+obtRandom :: IO Int
+obtRandom =  getStdRandom (randomR (1, 100))
