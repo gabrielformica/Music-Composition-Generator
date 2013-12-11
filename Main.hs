@@ -52,7 +52,7 @@ buscar' dir n = do
   let (seqs, filenames) = unzip $ sortBy (compare `on` snd) $ (uncurry zip) seqfns
   let lista = listify ([1..(length seqs)],seqs,filenames)
   if (n > 0) && (n <= length seqs) then
-      mapM_ (\(a,b,c) -> putStrLn (show a ++ " " ++ b ++ " " ++ show c)) $ tail $ take 10 $ sortBy (compare `on` obtter2) (calcDistList lista (seqs !! (n-1)))
+      mapM_ (\(a,b,c) -> putStrLn (show a ++ "\t" ++ b ++ "\t" ++ show c)) $ tail $ take 10 $ sortBy (compare `on` obtter2) (calcDistList lista (seqs !! (n-1)))
     else
       putStrLn "Indice fuera de rango"
 
