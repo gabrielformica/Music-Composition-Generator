@@ -18,9 +18,9 @@ obtFrecPar e (_, _, r) =  (map snd r) !! (obtIndice e (map fst r))
 obtFrec :: Evento -> Contexto -> Frec
 obtFrec e (_, q, _) = (map snd q) !! (obtIndice e (map fst q))
 
-procSecuencia :: [Evento] -> Contexto -> Contexto
-procSecuencia [] c = c
-procSecuencia l c = foldl agregarOrden1 (foldl agregarOrden0 c l) (creaPares l)
+procSecuencia :: Contexto -> [Evento] -> Contexto
+procSecuencia c [] = c
+procSecuencia c l = foldl agregarOrden1 (foldl agregarOrden0 c l) (creaPares l)
 
 ordenar :: Contexto -> Contexto
 ordenar (p, q, r) = (p, sort q, sort r)
@@ -125,3 +125,4 @@ obtEvenSig (p, q, r) a b = map fst q !! (obtIndice (head $ filter (a<=) b) b)
 
 obtRandom :: IO Int
 obtRandom =  getStdRandom (randomR (1, 100))
+

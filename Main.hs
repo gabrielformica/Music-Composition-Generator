@@ -5,6 +5,7 @@ import Input
 import Euterpea hiding (Event)
 import Data.List
 import Data.Function
+import Contexto
 
 -- Directorio predeterminado
 directorio :: String
@@ -25,8 +26,8 @@ componer = componer' directorio
 componer' :: String -> IO ()
 componer' dir = do
   (seqs, filenames) <- loadMusicXmls dir
-  let modelo = procSecuencia seqs (0,[],[])
-  --let composicion = 
+  let modelo = foldl procSecuencia (0,[],[]) seqs 
+  -- let composicion = 
   putStrLn $ show composicion
   play $ sequenceToMusic composicion
 
@@ -42,10 +43,13 @@ buscar :: Int -> IO ()
 buscar = buscar' directorio
   
 buscar' :: String -> Int -> IO ()
-buscar' dir = do
+buscar' dir n = do
   seqfns <- loadMusicXmls dir
-  let seqfns_ordenados = unzip $ sortBy (compare `on` snd) $ zip seqfns
-  -- ...
+  let (seqs, filenames) = unzip $ sortBy (compare `on` snd) $ (uncurry zip) seqfns
+  if (n > 0) && (n <= length seqs) then
+      putStrLn n
+    else
+      putStrLn "Indice fuera de rango"
 
 tocar :: Int -> IO ()
 tocar n = do
@@ -66,3 +70,4 @@ eventToNote e = note
   
 sequenceToMusic :: [Evento] -> Music Note1
 sequenceToMusic es = line $ map eventToNote es
+
