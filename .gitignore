@@ -7,3 +7,5 @@ test.hs
 
 *.hi
 Main
+semantic.cache
+music
