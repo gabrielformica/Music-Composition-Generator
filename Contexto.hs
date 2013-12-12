@@ -134,6 +134,9 @@ acumular (x:y:zs) = (x+y): acumular ((x+y):zs)
 obtEvenSig :: Contexto -> Float -> [Float] -> Evento
 obtEvenSig (p, q, r) a b = map fst q !! (obtIndice (head $ filter (a<=) b) b)
 
+obtComp :: Evento -> Contexto -> [Evento] 
+obtComp e c = EVENTOGENERADO@(obtEvenSig c obtRandom (obtListaProb e c)) : obtComp EVENTOGENERADO c 
+
 obtRandom :: IO Float
 obtRandom =  getStdRandom (randomR (0.0::Float, 1.0::Float))
 
@@ -147,5 +150,10 @@ calcDistList (x:xs) y = ((obtprim2 x),(obtter2 x) ,(calcDistancia (procSecuencia
 calcDistList [] _ = [] 
 
 
-f1 :: IO Float -> String
-f1 a = "Hola"
+--f1 :: IO Float -> String
+--f1 a = do
+--		b <- a
+--		if b < 0.9 then
+--			"hola"
+--		else
+--			"chao"

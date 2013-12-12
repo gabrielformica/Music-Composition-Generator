@@ -30,7 +30,7 @@ componer' :: String -> IO ()
 componer' dir = do
   (seqs, filenames) <- loadMusicXmls dir
   let modelo = foldl procSecuencia (0,[],[]) seqs 
-  -- -- let composicion = 
+  let composicion = obtComposicion (-1,-1) modelo
   -- putStrLn $ show composicion
   -- play $ sequenceToMusic composicion
   putStrLn $ show modelo
