@@ -131,11 +131,15 @@ acumular [] = []
 acumular (x:[]) = []
 acumular (x:y:zs) = (x+y): acumular ((x+y):zs)
 
-obtEvenSig :: Contexto -> Float -> [Float] -> Evento
+obtEvenSig :: Contexto -> Float -> [Float] ->  Evento
 obtEvenSig (p, q, r) a b = map fst q !! (obtIndice (head $ filter (a<=) b) b)
 
-obtComp :: Float -> Evento -> Contexto -> [Evento] 
-obtComp prob e c = (obtEvenSig c prob (obtListaProb e c)) : obtComp obtRandom (obtEvenSig c prob (obtListaProb e c)) c 
+obtComp :: Evento -> Contexto -> Int -> [Evento] 
+obtComp e c l =  if l <= 0 then 
+							[]
+					  else 
+					  		nuevoE : obtComp nuevoE c (l-1)
+	where nuevoE = (obtEvenSig c 0.3 (obtListaProb e c))
 
 obtRandom :: IO Float
 obtRandom =  getStdRandom (randomR (0.0::Float, 1.0::Float))
