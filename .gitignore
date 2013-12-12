@@ -5,3 +5,7 @@ test.hs
 .*
 !.gitignore
 
+*.hi
+Main
+semantic.cache
+music

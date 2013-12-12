@@ -1,8 +1,10 @@
+module Contexto where
+
 import Data.List (sort)
 import System.Random
+import Input
 
-
-type Evento = (Int, Int)  --Evento vacio (-1,-1)
+-- type Evento = (Int, Int)  --Evento vacio (-1,-1)
 type Frec = Int --Frecuencia
 type Contexto = (Frec, [(Evento, Frec)], [((Evento, Evento), Frec)])
 
@@ -18,9 +20,9 @@ obtFrecPar e (_, _, r) =  (map snd r) !! (obtIndice e (map fst r))
 obtFrec :: Evento -> Contexto -> Frec
 obtFrec e (_, q, _) = (map snd q) !! (obtIndice e (map fst q))
 
-procSecuencia :: [Evento] -> Contexto -> Contexto
-procSecuencia [] c = c
-procSecuencia l c = foldl agregarOrden1 (foldl agregarOrden0 c l) (creaPares l)
+procSecuencia :: Contexto -> [Evento] -> Contexto
+procSecuencia c [] = c
+procSecuencia c l = foldl agregarOrden1 (foldl agregarOrden0 c l) (creaPares l)
 
 ordenar :: Contexto -> Contexto
 ordenar (p, q, r) = (p, sort q, sort r)
@@ -54,6 +56,15 @@ agregar x ((b, c):ys) =
 obtprim :: Contexto -> Frec
 obtprim (a,_,_) = a
 
+obtprim2 :: (a,b,c) -> a
+obtprim2 (a,_,_) = a
+
+obtseg2 :: (a,b,c) -> b
+obtseg2 (_,b,_) = b                   
+
+obtter2 :: (a,b,c) -> c
+obtter2 (_,_,c) = c
+                  
 obtseg :: Contexto -> [(Evento, Frec)]
 obtseg (_,a,_) = a
 
@@ -123,5 +134,18 @@ acumular (x:y:zs) = (x+y): acumular ((x+y):zs)
 obtEvenSig :: Contexto -> Float -> [Float] -> Evento
 obtEvenSig (p, q, r) a b = map fst q !! (obtIndice (head $ filter (a<=) b) b)
 
-obtRandom :: IO Int
-obtRandom =  getStdRandom (randomR (1, 100))
+obtRandom :: IO Float
+obtRandom =  getStdRandom (randomR (0.0::Float, 1.0::Float))
+
+listify :: ([a], [b], [c]) -> [(a,b,c)]
+listify ((x:xs),(y:ys),(z:zs)) = (x,y,z):listify (xs, ys, zs)
+listify ([],_,_) = []
+
+
+calcDistList :: [(Int, [Evento], String)] -> [Evento] -> [(Int, String, Float)]
+calcDistList (x:xs) y = ((obtprim2 x),(obtter2 x) ,(calcDistancia (procSecuencia (0,[],[]) y) (procSecuencia (0,[],[]) (obtseg2 x)))):calcDistList xs y
+calcDistList [] _ = [] 
+
+
+f1 :: IO Float -> String
+f1 a = "Hola"
