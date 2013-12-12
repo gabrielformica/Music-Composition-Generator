@@ -134,8 +134,8 @@ acumular (x:y:zs) = (x+y): acumular ((x+y):zs)
 obtEvenSig :: Contexto -> Float -> [Float] -> Evento
 obtEvenSig (p, q, r) a b = map fst q !! (obtIndice (head $ filter (a<=) b) b)
 
-obtComp :: Evento -> Contexto -> [Evento] 
-obtComp e c = EVENTOGENERADO@(obtEvenSig c obtRandom (obtListaProb e c)) : obtComp EVENTOGENERADO c 
+obtComp :: Float -> Evento -> Contexto -> [Evento] 
+obtComp prob e c = (obtEvenSig c prob (obtListaProb e c)) : obtComp obtRandom (obtEvenSig c prob (obtListaProb e c)) c 
 
 obtRandom :: IO Float
 obtRandom =  getStdRandom (randomR (0.0::Float, 1.0::Float))
