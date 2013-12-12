@@ -106,7 +106,7 @@ obtProb c@(p, q, r) (a, e) =
 			 if (a, e) `elem` map fst r then
 				 0.3*((obtFrec e c) `divInt` obtFrecVacia c) + 0.7*((obtFrecPar (a, e) c) `divInt` obtFrec a c)
 			 else
-				0.0
+				0.3*((obtFrec e c) `divInt` obtFrecVacia c)
 
 divInt ::  Int -> Int -> Float
 a `divInt` b = fromIntegral (a) / fromIntegral (b)
