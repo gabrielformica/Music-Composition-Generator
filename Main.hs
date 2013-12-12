@@ -30,10 +30,10 @@ componer' :: String -> IO ()
 componer' dir = do
   (seqs, filenames) <- loadMusicXmls dir
   let modelo = foldl procSecuencia (0,[],[]) seqs 
-  let composicion = obtComposicion (-1,-1) modelo
-  -- putStrLn $ show composicion
-  -- play $ sequenceToMusic composicion
-  putStrLn $ show modelo
+  composicion <- obtComp' (-1,-1) modelo longitud
+  putStrLn $ show composicion
+  --play $ sequenceToMusic composicion
+  --putStrLn $ show modelo
 
 {- Recupera las diez secuencias más similares a la k-ésima secuencia 
    de la colección musical en el directorio por defecto, donde la 
