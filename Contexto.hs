@@ -3,7 +3,7 @@ module Contexto where
 import Data.List (sort)
 import System.Random
 import Input
-
+    
 -- type Evento = (Int, Int)  --Evento vacio (-1,-1)
 type Frec = Int --Frecuencia
 type Contexto = (Frec, [(Evento, Frec)], [((Evento, Evento), Frec)])
