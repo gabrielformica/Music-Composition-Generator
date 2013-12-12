@@ -123,8 +123,11 @@ divInt ::  Int -> Int -> Float
 a `divInt` b = fromIntegral (a) / fromIntegral (b)
 
 obtListaProb :: Evento -> Contexto -> [Float]
-obtListaProb (-1, -1) (p, q, r) =  acumular $ (0.0:) $ map (`divInt` p) $ map snd q
-obtListaProb e c@(p, q, r) = acumular $ (0.0:) $ map (obtProb c) $ map (creaOrden1 e) (map fst q)
+obtListaProb (-1, -1) (p, q, r) =  acumular $ normalizar $ (0.0:) $ map (`divInt` p) $ map snd q
+obtListaProb e c@(p, q, r) = acumular $ (0.0:) $ normalizar $ map (obtProb c) $ map (creaOrden1 e) (map fst q)
+
+normalizar :: [Float] -> [Float]
+normalizar a = map (/sum a) a
 
 acumular :: [Float] -> [Float]
 acumular [] = []
@@ -134,12 +137,22 @@ acumular (x:y:zs) = (x+y): acumular ((x+y):zs)
 obtEvenSig :: Contexto -> Float -> [Float] ->  Evento
 obtEvenSig (p, q, r) a b = map fst q !! (obtIndice (head $ filter (a<=) b) b)
 
+obtComp' :: Evento -> Contexto -> Int -> IO [Evento] 
+obtComp' e c l = do
+						if l <= 0 then
+							return []
+						else do
+							p <- obtRandom
+							let nuevoE = obtEvenSig c p (obtListaProb e c)
+							colaE <- obtComp' nuevoE c (l -1) 
+							return (nuevoE : colaE)
+
 obtComp :: Evento -> Contexto -> Int -> [Evento] 
 obtComp e c l =  if l <= 0 then 
 							[]
 					  else 
 					  		nuevoE : obtComp nuevoE c (l-1)
-	where nuevoE = (obtEvenSig c 0.3 (obtListaProb e c))
+	where nuevoE = (obtEvenSig c 0.4 (obtListaProb e c))
 
 obtRandom :: IO Float
 obtRandom =  getStdRandom (randomR (0.0::Float, 1.0::Float))
@@ -152,12 +165,3 @@ listify ([],_,_) = []
 calcDistList :: [(Int, [Evento], String)] -> [Evento] -> [(Int, String, Float)]
 calcDistList (x:xs) y = ((obtprim2 x),(obtter2 x) ,(calcDistancia (procSecuencia (0,[],[]) y) (procSecuencia (0,[],[]) (obtseg2 x)))):calcDistList xs y
 calcDistList [] _ = [] 
-
-
---f1 :: IO Float -> String
---f1 a = do
---		b <- a
---		if b < 0.9 then
---			"hola"
---		else
---			"chao"
