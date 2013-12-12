@@ -32,8 +32,7 @@ componer' dir = do
   let modelo = foldl procSecuencia (0,[],[]) seqs 
   composicion <- obtComp' (-1,-1) modelo longitud
   putStrLn $ show composicion
-  --play $ sequenceToMusic composicion
-  --putStrLn $ show modelo
+  play $ sequenceToMusic composicion
 
 {- Recupera las diez secuencias más similares a la k-ésima secuencia 
    de la colección musical en el directorio por defecto, donde la 
