@@ -147,13 +147,6 @@ obtComp' e c l = do
 							colaE <- obtComp' nuevoE c (l -1) 
 							return (nuevoE : colaE)
 
-obtComp :: Evento -> Contexto -> Int -> [Evento] 
-obtComp e c l =  if l <= 0 then 
-							[]
-					  else 
-					  		nuevoE : obtComp nuevoE c (l-1)
-	where nuevoE = (obtEvenSig c 0.4 (obtListaProb e c))
-
 obtRandom :: IO Float
 obtRandom =  getStdRandom (randomR (0.0::Float, 1.0::Float))
 
